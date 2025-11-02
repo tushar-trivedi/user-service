@@ -1,0 +1,25 @@
+meta {
+  name: Test: Create User with Invalid Data (Returns 400 Bad Request)
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/api/users
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "",
+    "email": "invalid-email",
+    "password": "123",
+    "fullName": ""
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

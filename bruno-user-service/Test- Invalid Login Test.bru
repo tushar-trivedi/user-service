@@ -1,0 +1,27 @@
+meta {
+  name: Test: Invalid Login Test
+  type: http
+  seq: 15
+}
+
+post {
+  url: {{baseUrl}}/api/v1/users/login
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "nonexistent@example.com",
+    "password": "wrong_password"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

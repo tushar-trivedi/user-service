@@ -1,0 +1,30 @@
+meta {
+  name: Create User John
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/users
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "password": "SecurePassword123", 
+    "roles": ["USER"]
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

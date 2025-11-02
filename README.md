@@ -104,7 +104,7 @@ user-service/
 Located in `src/main/resources/application.properties`:
 ```properties
 # MongoDB Configuration
-spring.data.mongodb.uri=mongodb://localhost:27017/user_service_db
+spring.data.mongodb.uri=mongodb://localhost:27017/database_name
 
 # Logging Configuration
 logging.level.com.nexus.user_service=DEBUG

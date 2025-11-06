@@ -1,5 +1,6 @@
 package com.nexus.user_service.dto.response;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class UserListResponseDTO {
@@ -7,15 +8,17 @@ public class UserListResponseDTO {
     private String id;
     private String name;
     private List<String> roles;
+    private BigDecimal walletBalance;
     
     // Default constructor
     public UserListResponseDTO() {}
     
     // Constructor with all fields
-    public UserListResponseDTO(String id, String name, List<String> roles) {
+    public UserListResponseDTO(String id, String name, List<String> roles, BigDecimal walletBalance) {
         this.id = id;
         this.name = name;
         this.roles = roles;
+        this.walletBalance = walletBalance;
     }
     
     // Getters and Setters
@@ -43,12 +46,21 @@ public class UserListResponseDTO {
         this.roles = roles;
     }
     
+    public BigDecimal getWalletBalance() {
+        return walletBalance;
+    }
+    
+    public void setWalletBalance(BigDecimal walletBalance) {
+        this.walletBalance = walletBalance;
+    }
+    
     @Override
     public String toString() {
         return "UserListResponseDTO{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", roles=" + roles +
+                ", walletBalance=" + walletBalance +
                 '}';
     }
 }

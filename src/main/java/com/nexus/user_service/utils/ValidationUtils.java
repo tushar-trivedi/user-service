@@ -1,5 +1,6 @@
 package com.nexus.user_service.utils;
 
+import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
 public class ValidationUtils {
@@ -141,6 +142,42 @@ public class ValidationUtils {
     }
     
     /**
+     * Validate wallet balance amount
+     * @param walletBalance wallet balance to validate
+     * @return true if wallet balance is valid
+     */
+    public static boolean isValidWalletBalance(BigDecimal walletBalance) {
+        if (walletBalance == null) {
+            return true; // null is acceptable (will default to 0)
+        }
+        
+        // Wallet balance must be non-negative and reasonable
+        return walletBalance.compareTo(BigDecimal.ZERO) >= 0 && 
+               walletBalance.compareTo(new BigDecimal("999999999.99")) <= 0;
+    }
+    
+    /**
+     * Get validation error message for wallet balance
+     * @param walletBalance wallet balance to validate
+     * @return error message or null if valid
+     */
+    public static String getWalletBalanceValidationError(BigDecimal walletBalance) {
+        if (walletBalance != null) {
+            if (walletBalance.compareTo(BigDecimal.ZERO) < 0) {
+                return "Wallet balance cannot be negative";
+            }
+            if (walletBalance.compareTo(new BigDecimal("999999999.99")) > 0) {
+                return "Wallet balance cannot exceed 999,999,999.99";
+            }
+            // Check decimal places (max 2 decimal places for currency)
+            if (walletBalance.scale() > 2) {
+                return "Wallet balance cannot have more than 2 decimal places";
+            }
+        }
+        return null;
+    }
+    
+    /**
      * Get validation error message for email
      * @param email email to validate
      * @return error message or null if valid
@@ -210,6 +247,12 @@ public class ValidationUtils {
             }
         }
         
+        // Validate wallet balance if provided
+        String walletError = getWalletBalanceValidationError(request.getWalletBalance());
+        if (walletError != null) {
+            return walletError;
+        }
+        
         return null;
     }
     
@@ -248,8 +291,8 @@ public class ValidationUtils {
         }
         
         // At least one field should be provided
-        if (isNullOrEmpty(request.getName()) && isNullOrEmpty(request.getEmail())) {
-            return "At least one field (name or email) must be provided for update";
+        if (isNullOrEmpty(request.getName()) && isNullOrEmpty(request.getEmail()) && request.getWalletBalance() == null) {
+            return "At least one field (name, email, or walletBalance) must be provided for update";
         }
         
         // Validate name if provided
@@ -265,6 +308,14 @@ public class ValidationUtils {
             String emailError = getEmailValidationError(request.getEmail());
             if (emailError != null) {
                 return emailError;
+            }
+        }
+        
+        // Validate wallet balance if provided
+        if (request.getWalletBalance() != null) {
+            String walletError = getWalletBalanceValidationError(request.getWalletBalance());
+            if (walletError != null) {
+                return walletError;
             }
         }
         

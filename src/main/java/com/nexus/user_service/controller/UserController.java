@@ -54,12 +54,7 @@ public class UserController {
                 return ResponseEntity.badRequest().body(ResponseUtils.error("Invalid email format"));
             }
             
-            User user = userService.createUser(
-                request.getName(), 
-                request.getEmail(), 
-                request.getPassword(), 
-                request.getRoles()
-            );
+            User user = userService.createUser(request);
             
             UserResponseDTO response = MapperUtils.toUserResponseDTO(user);
             logger.info("User created successfully: {}", user.getId());
@@ -194,7 +189,7 @@ public class UserController {
                 return ResponseEntity.badRequest().body(ResponseUtils.error("Invalid email format"));
             }
             
-            User updatedUser = userService.updateUser(id, request.getName(), request.getEmail());
+            User updatedUser = userService.updateUser(id, request);
             UserResponseDTO response = MapperUtils.toUserResponseDTO(updatedUser);
             
             logger.info("User updated successfully: {}", updatedUser.getId());

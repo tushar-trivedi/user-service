@@ -1,5 +1,6 @@
 package com.nexus.user_service.dto.request;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class UserCreateRequestDTO {
@@ -8,6 +9,7 @@ public class UserCreateRequestDTO {
     private String email;
     private String password;
     private List<String> roles;
+    private BigDecimal walletBalance; // Optional, defaults to 0 if not provided
     
     // Default constructor
     public UserCreateRequestDTO() {}
@@ -18,6 +20,16 @@ public class UserCreateRequestDTO {
         this.email = email;
         this.password = password;
         this.roles = roles;
+        this.walletBalance = null; // Will default to 0 in service layer
+    }
+    
+    // Constructor with wallet balance
+    public UserCreateRequestDTO(String name, String email, String password, List<String> roles, BigDecimal walletBalance) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+        this.walletBalance = walletBalance;
     }
     
     // Getters and Setters
@@ -53,12 +65,21 @@ public class UserCreateRequestDTO {
         this.roles = roles;
     }
     
+    public BigDecimal getWalletBalance() {
+        return walletBalance;
+    }
+    
+    public void setWalletBalance(BigDecimal walletBalance) {
+        this.walletBalance = walletBalance;
+    }
+    
     @Override
     public String toString() {
         return "UserCreateRequestDTO{" +
                 "name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", roles=" + roles +
+                ", walletBalance=" + walletBalance +
                 '}';
     }
 }

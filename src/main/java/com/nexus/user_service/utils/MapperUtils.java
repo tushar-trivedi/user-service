@@ -7,6 +7,7 @@ import com.nexus.user_service.dto.response.UserListResponseDTO;
 import com.nexus.user_service.dto.response.UserResponseDTO;
 import com.nexus.user_service.model.User;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,8 @@ public class MapperUtils {
         user.setEmail(dto.getEmail().toLowerCase().trim());
         user.setRoles(dto.getRoles());
         user.setVerified(false);
+        // Set wallet balance from DTO or default to 0
+        user.setWalletBalance(dto.getWalletBalance() != null ? dto.getWalletBalance() : BigDecimal.ZERO);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         // Note: Password will be hashed in service layer
@@ -51,6 +54,7 @@ public class MapperUtils {
         dto.setEmail(user.getEmail());
         dto.setRoles(user.getRoles());
         dto.setVerified(user.isVerified());
+        dto.setWalletBalance(user.getWalletBalance());
         dto.setCreatedAt(user.getCreatedAt());
         dto.setUpdatedAt(user.getUpdatedAt());
         // Note: passwordHash is NOT included for security
@@ -72,6 +76,7 @@ public class MapperUtils {
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setRoles(user.getRoles());
+        dto.setWalletBalance(user.getWalletBalance());
         
         return dto;
     }
@@ -122,6 +127,10 @@ public class MapperUtils {
             user.setEmail(dto.getEmail().toLowerCase().trim());
         }
         
+        if (dto.getWalletBalance() != null) {
+            user.setWalletBalance(dto.getWalletBalance());
+        }
+        
         user.setUpdatedAt(LocalDateTime.now());
     }
     
@@ -139,6 +148,7 @@ public class MapperUtils {
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setRoles(user.getRoles());
+        dto.setWalletBalance(user.getWalletBalance());
         
         return dto;
     }
@@ -157,7 +167,8 @@ public class MapperUtils {
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
-        // Note: Only id, name, email for GET by ID as per API spec
+        dto.setWalletBalance(user.getWalletBalance());
+        // Note: Now includes wallet balance in GET by ID response
         
         return dto;
     }

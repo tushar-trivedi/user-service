@@ -1,5 +1,7 @@
 package com.nexus.user_service.service;
 
+import com.nexus.user_service.dto.request.UserCreateRequestDTO;
+import com.nexus.user_service.dto.request.UserUpdateRequestDTO;
 import com.nexus.user_service.model.User;
 
 import java.util.List;
@@ -9,14 +11,11 @@ public interface UserService {
     
     /**
      * Create a new user
-     * @param name user's name
-     * @param email user's email
-     * @param password user's password (will be hashed)
-     * @param roles user's roles
+     * @param request UserCreateRequestDTO containing user data
      * @return created User
      * @throws RuntimeException if email already exists
      */
-    User createUser(String name, String email, String password, List<String> roles);
+    User createUser(UserCreateRequestDTO request);
     
     /**
      * Authenticate user with email and password
@@ -49,12 +48,11 @@ public interface UserService {
     /**
      * Update user information
      * @param id user's ID
-     * @param name new name (optional)
-     * @param email new email (optional)
+     * @param request UserUpdateRequestDTO containing updated data
      * @return updated User
      * @throws RuntimeException if user not found or email already exists
      */
-    User updateUser(String id, String name, String email);
+    User updateUser(String id, UserUpdateRequestDTO request);
     
     /**
      * Delete user by ID

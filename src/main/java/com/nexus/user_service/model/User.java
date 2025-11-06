@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.index.Indexed;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class User {
     
     private boolean verified;
     
+    private BigDecimal walletBalance;
+    
     private LocalDateTime createdAt;
     
     private LocalDateTime updatedAt;
@@ -33,6 +36,7 @@ public class User {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         this.verified = false;
+        this.walletBalance = BigDecimal.ZERO;
     }
     
     // Constructor with required fields
@@ -110,6 +114,15 @@ public class User {
         return updatedAt;
     }
     
+    public BigDecimal getWalletBalance() {
+        return walletBalance;
+    }
+    
+    public void setWalletBalance(BigDecimal walletBalance) {
+        this.walletBalance = walletBalance;
+        this.updatedAt = LocalDateTime.now();
+    }
+    
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
@@ -122,6 +135,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", roles=" + roles +
                 ", verified=" + verified +
+                ", walletBalance=" + walletBalance +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

@@ -1,5 +1,6 @@
 package com.nexus.user_service.dto.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -10,6 +11,7 @@ public class UserResponseDTO {
     private String email;
     private List<String> roles;
     private boolean verified;
+    private BigDecimal walletBalance;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
@@ -18,12 +20,13 @@ public class UserResponseDTO {
     
     // Constructor with all fields
     public UserResponseDTO(String id, String name, String email, List<String> roles, 
-                          boolean verified, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                          boolean verified, BigDecimal walletBalance, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.roles = roles;
         this.verified = verified;
+        this.walletBalance = walletBalance;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -69,6 +72,14 @@ public class UserResponseDTO {
         this.verified = verified;
     }
     
+    public BigDecimal getWalletBalance() {
+        return walletBalance;
+    }
+    
+    public void setWalletBalance(BigDecimal walletBalance) {
+        this.walletBalance = walletBalance;
+    }
+    
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -93,6 +104,7 @@ public class UserResponseDTO {
                 ", email='" + email + '\'' +
                 ", roles=" + roles +
                 ", verified=" + verified +
+                ", walletBalance=" + walletBalance +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

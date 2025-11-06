@@ -1,8 +1,11 @@
 package com.nexus.user_service.service;
 
+import com.nexus.user_service.dto.request.UserCreateRequestDTO;
+import com.nexus.user_service.dto.request.UserUpdateRequestDTO;
 import com.nexus.user_service.model.User;
 import com.nexus.user_service.repository.UserRepository;
 import com.nexus.user_service.utils.LoggerUtils;
+import com.nexus.user_service.utils.MapperUtils;
 import com.nexus.user_service.utils.PasswordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,20 +25,17 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     
     @Override
-    public User createUser(String name, String email, String password, List<String> roles) {
-        logger.info("Creating user with email: {}", email);
+    public User createUser(UserCreateRequestDTO request) {
+        logger.info("Creating user with email: {}", request.getEmail());
         
         // Check if user already exists
-        if (userRepository.existsByEmail(email)) {
-            throw new RuntimeException("User with email " + email + " already exists");
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("User with email " + request.getEmail() + " already exists");
         }
         
-        // Create new user
-        User user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        user.setPasswordHash(PasswordUtils.hashPassword(password));
-        user.setRoles(roles);
+        // Use MapperUtils to convert DTO to User entity
+        User user = MapperUtils.toUser(request);
+        user.setPasswordHash(PasswordUtils.hashPassword(request.getPassword()));
         user.setVerified(false);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
-    public User updateUser(String id, String name, String email) {
+    public User updateUser(String id, UserUpdateRequestDTO request) {
         logger.info("Updating user with ID: {}", id);
         
         Optional<User> userOpt = userRepository.findById(id);
@@ -93,17 +93,14 @@ public class UserServiceImpl implements UserService {
         User user = userOpt.get();
         
         // Check if new email is already taken by another user
-        if (email != null && !email.equals(user.getEmail())) {
-            if (userRepository.existsByEmail(email)) {
-                throw new RuntimeException("Email " + email + " is already taken");
+        if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
+            if (userRepository.existsByEmail(request.getEmail())) {
+                throw new RuntimeException("Email " + request.getEmail() + " is already taken");
             }
-            user.setEmail(email);
         }
         
-        if (name != null) {
-            user.setName(name);
-        }
-        
+        // Use MapperUtils to update user from DTO
+        MapperUtils.updateUserFromDTO(user, request);
         user.setUpdatedAt(LocalDateTime.now());
         
         User updatedUser = userRepository.save(user);

@@ -259,13 +259,19 @@ logging.level.org.springframework.data.mongodb=DEBUG
 ```
 
 ### For Deployed MongoDB
-To connect to a deployed MongoDB instance:
+To connect to a deployed MongoDB instance (MongoDB Atlas):
 1. Update the `spring.data.mongodb.uri` in `application.properties`
-2. Replace `localhost:27017` with your deployed instance host and port
-3. Add authentication credentials if required:
+2. Use the MongoDB Atlas connection string format:
    ```properties
-   spring.data.mongodb.uri=mongodb://username:password@host:port/database_name
+   spring.data.mongodb.uri=mongodb+srv://username:password@cluster.mongodb.net/?appName=ClusterName/database_name
    ```
+   
+**Example Atlas URI format:**
+```properties
+spring.data.mongodb.uri=mongodb+srv://nexus:nexus5@cluster0.kei0rsa.mongodb.net/?appName=Cluster0/nexus_users
+```
+
+**Note:** Replace `username`, `password`, `cluster.mongodb.net`, `ClusterName`, and `database_name` with your actual MongoDB Atlas credentials and cluster information.
 
 ## Microservice Architecture
 

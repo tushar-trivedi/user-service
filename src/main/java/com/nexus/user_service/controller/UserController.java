@@ -3,6 +3,7 @@ package com.nexus.user_service.controller;
 import com.nexus.user_service.dto.request.UserCreateRequestDTO;
 import com.nexus.user_service.dto.request.UserUpdateRequestDTO;
 import com.nexus.user_service.dto.request.LoginRequestDTO;
+import com.nexus.user_service.dto.request.UserValidationRequestDTO;
 import com.nexus.user_service.dto.response.UserResponseDTO;
 import com.nexus.user_service.dto.response.UserListResponseDTO;
 import com.nexus.user_service.dto.response.LoginResponseDTO;
@@ -104,6 +105,41 @@ public class UserController {
         } catch (RuntimeException e) {
             logger.error("Error during authentication: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseUtils.error(e.getMessage()));
+        }
+    }
+    
+    /**
+     * Validate user credentials
+     * POST /api/v1/auth/validate-user
+     * Request: UserValidationRequestDTO
+     * Response: UserResponseDTO or 401 Unauthorized
+     */
+    @PostMapping("/auth/validate-user")
+    public ResponseEntity<Map<String, Object>> validateUser(@RequestBody UserValidationRequestDTO request) {
+        try {
+            logger.info("Validating user with email: {}", request.getEmail());
+            
+            // Validate request
+            if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(ResponseUtils.error("Email is required"));
+            }
+            if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(ResponseUtils.error("Password is required"));
+            }
+            
+            // Validate email format
+            if (!ValidationUtils.isValidEmail(request.getEmail())) {
+                return ResponseEntity.badRequest().body(ResponseUtils.error("Invalid email format"));
+            }
+            
+            UserResponseDTO response = userService.validateUser(request);
+            logger.info("User validation successful for: {}", request.getEmail());
+            
+            return ResponseEntity.ok(ResponseUtils.success("User validation successful", response));
+            
+        } catch (RuntimeException e) {
+            logger.warn("User validation failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseUtils.unauthorized("Invalid credentials"));
         }
     }
     

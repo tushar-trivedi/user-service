@@ -2,6 +2,8 @@ package com.nexus.user_service.service;
 
 import com.nexus.user_service.dto.request.UserCreateRequestDTO;
 import com.nexus.user_service.dto.request.UserUpdateRequestDTO;
+import com.nexus.user_service.dto.request.UserValidationRequestDTO;
+import com.nexus.user_service.dto.response.UserResponseDTO;
 import com.nexus.user_service.model.User;
 import com.nexus.user_service.repository.UserRepository;
 import com.nexus.user_service.utils.LoggerUtils;
@@ -151,5 +153,31 @@ public class UserServiceImpl implements UserService {
     public List<User> getUsersByRole(String role) {
         logger.info("Fetching users by role: {}", role);
         return userRepository.findByRole(role);
+    }
+    
+    @Override
+    public UserResponseDTO validateUser(UserValidationRequestDTO request) {
+        logger.info("Validating user with email: {}", request.getEmail());
+        
+        // Validate input
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            throw new RuntimeException("Email is required");
+        }
+        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+            throw new RuntimeException("Password is required");
+        }
+        
+        // Use existing authenticate method
+        User user = authenticateUser(request.getEmail(), request.getPassword());
+        
+        if (user == null) {
+            throw new RuntimeException("Invalid credentials");
+        }
+        
+        // Convert User to UserResponseDTO
+        UserResponseDTO response = MapperUtils.toUserResponseDTO(user);
+        
+        logger.info("User validation successful for: {}", request.getEmail());
+        return response;
     }
 }

@@ -1,24 +1,21 @@
 meta {
-  name: User Login
+  name: User Validation
   type: http
-  seq: 9
+  seq: 8
 }
 
 post {
-  url: {{baseUrl}}/api/v1/auth/login
+  url: {{baseUrl}}/api/v1/auth/validate-user
   body: json
   auth: inherit
 }
 
-headers {
-  Content-Type: application/json
-}
-
 body:json {
   {
-    "email": "john.doe@example.com", 
+    "email": "john.updated@example.com",
     "password": "SecurePassword123"
   }
+  
 }
 
 settings {

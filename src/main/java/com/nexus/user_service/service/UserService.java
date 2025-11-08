@@ -2,6 +2,8 @@ package com.nexus.user_service.service;
 
 import com.nexus.user_service.dto.request.UserCreateRequestDTO;
 import com.nexus.user_service.dto.request.UserUpdateRequestDTO;
+import com.nexus.user_service.dto.request.UserValidationRequestDTO;
+import com.nexus.user_service.dto.response.UserResponseDTO;
 import com.nexus.user_service.model.User;
 
 import java.util.List;
@@ -83,5 +85,13 @@ public interface UserService {
      * @return List<User>
      */
     List<User> getUsersByRole(String role);
+    
+    /**
+     * Validate user credentials and return user details
+     * @param request UserValidationRequestDTO containing email and password
+     * @return UserResponseDTO if validation successful
+     * @throws RuntimeException if credentials are invalid
+     */
+    UserResponseDTO validateUser(UserValidationRequestDTO request);
     
 }

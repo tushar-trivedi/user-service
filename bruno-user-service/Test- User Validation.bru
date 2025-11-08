@@ -1,17 +1,13 @@
 meta {
-  name: Test: Invalid Login Test
+  name: Test: User Validation
   type: http
-  seq: 13
+  seq: 16
 }
 
 post {
-  url: {{baseUrl}}/api/v1/auth/login
+  url: {{baseUrl}}/api/v1/auth/validate-user
   body: json
   auth: inherit
-}
-
-headers {
-  Content-Type: application/json
 }
 
 body:json {
@@ -19,6 +15,7 @@ body:json {
     "email": "nonexistent@example.com",
     "password": "wrong_password"
   }
+  
 }
 
 settings {

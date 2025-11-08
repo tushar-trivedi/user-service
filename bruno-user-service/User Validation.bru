@@ -1,7 +1,7 @@
 meta {
   name: User Validation
   type: http
-  seq: 8
+  seq: 10
 }
 
 post {
@@ -10,12 +10,15 @@ post {
   auth: inherit
 }
 
+headers {
+  Content-Type: application/json
+}
+
 body:json {
   {
-    "email": "john.updated@example.com",
+    "email": "john.updated@example.com", 
     "password": "SecurePassword123"
   }
-  
 }
 
 settings {

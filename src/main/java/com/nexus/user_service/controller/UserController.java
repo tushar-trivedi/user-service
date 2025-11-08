@@ -2,11 +2,9 @@ package com.nexus.user_service.controller;
 
 import com.nexus.user_service.dto.request.UserCreateRequestDTO;
 import com.nexus.user_service.dto.request.UserUpdateRequestDTO;
-import com.nexus.user_service.dto.request.LoginRequestDTO;
 import com.nexus.user_service.dto.request.UserValidationRequestDTO;
 import com.nexus.user_service.dto.response.UserResponseDTO;
 import com.nexus.user_service.dto.response.UserListResponseDTO;
-import com.nexus.user_service.dto.response.LoginResponseDTO;
 import com.nexus.user_service.model.User;
 import com.nexus.user_service.service.UserService;
 import com.nexus.user_service.utils.LoggerUtils;
@@ -65,46 +63,6 @@ public class UserController {
         } catch (RuntimeException e) {
             logger.error("Error creating user: {}", e.getMessage());
             return ResponseEntity.badRequest().body(ResponseUtils.error(e.getMessage()));
-        }
-    }
-    
-    /**
-     * Authenticate user (login)
-     * POST /api/v1/auth/login
-     * Request: LoginRequestDTO
-     * Response: LoginResponseDTO
-     */
-    @PostMapping("/auth/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequestDTO request) {
-        try {
-            logger.info("Authenticating user with email: {}", request.getEmail());
-            
-            // Validate request
-            String validationError = ValidationUtils.validateLoginRequest(request);
-            if (validationError != null) {
-                return ResponseEntity.badRequest().body(ResponseUtils.error(validationError));
-            }
-            
-            // Validate email format
-            if (!ValidationUtils.isValidEmail(request.getEmail())) {
-                return ResponseEntity.badRequest().body(ResponseUtils.error("Invalid email format"));
-            }
-            
-            User user = userService.authenticateUser(request.getEmail(), request.getPassword());
-            
-            if (user != null) {
-                // Generate simple token (in production, use JWT)
-                String token = "token_" + user.getId() + "_" + System.currentTimeMillis();
-                LoginResponseDTO response = MapperUtils.toLoginResponseDTO(token, user.getId());
-                logger.info("User authenticated successfully: {}", user.getId());
-                return ResponseEntity.ok(ResponseUtils.success("Login successful", response));
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseUtils.unauthorized("Invalid credentials"));
-            }
-            
-        } catch (RuntimeException e) {
-            logger.error("Error during authentication: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseUtils.error(e.getMessage()));
         }
     }
     

@@ -257,30 +257,6 @@ public class ValidationUtils {
     }
     
     /**
-     * Validate LoginRequestDTO
-     * @param request LoginRequestDTO to validate
-     * @return error message or null if valid
-     */
-    public static String validateLoginRequest(com.nexus.user_service.dto.request.LoginRequestDTO request) {
-        if (request == null) {
-            return "Request body is required";
-        }
-        
-        // Validate email
-        String emailError = getEmailValidationError(request.getEmail());
-        if (emailError != null) {
-            return emailError;
-        }
-        
-        // Validate password
-        if (isNullOrEmpty(request.getPassword())) {
-            return "Password is required";
-        }
-        
-        return null;
-    }
-    
-    /**
      * Validate UserUpdateRequestDTO
      * @param request UserUpdateRequestDTO to validate
      * @return error message or null if valid

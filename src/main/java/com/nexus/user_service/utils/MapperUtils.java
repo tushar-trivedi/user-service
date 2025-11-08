@@ -2,7 +2,6 @@ package com.nexus.user_service.utils;
 
 import com.nexus.user_service.dto.request.UserCreateRequestDTO;
 import com.nexus.user_service.dto.request.UserUpdateRequestDTO;
-import com.nexus.user_service.dto.response.LoginResponseDTO;
 import com.nexus.user_service.dto.response.UserListResponseDTO;
 import com.nexus.user_service.dto.response.UserResponseDTO;
 import com.nexus.user_service.model.User;
@@ -94,19 +93,6 @@ public class MapperUtils {
         return users.stream()
                    .map(MapperUtils::toUserListResponseDTO)
                    .collect(Collectors.toList());
-    }
-    
-    /**
-     * Create LoginResponseDTO
-     * @param token authentication token
-     * @param userId user ID
-     * @return LoginResponseDTO
-     */
-    public static LoginResponseDTO toLoginResponseDTO(String token, String userId) {
-        LoginResponseDTO dto = new LoginResponseDTO();
-        dto.setToken(token);
-        dto.setUserId(userId);
-        return dto;
     }
     
     /**

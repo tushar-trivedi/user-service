@@ -308,11 +308,7 @@ To connect to a deployed MongoDB instance (MongoDB Atlas):
    ```properties
    spring.data.mongodb.uri=mongodb+srv://username:password@cluster.mongodb.net/?appName=ClusterName/database_name
    ```
-   
-**Example Atlas URI format:**
-```properties
-spring.data.mongodb.uri=mongodb+srv://nexus:nexus5@cluster0.kei0rsa.mongodb.net/?appName=Cluster0/nexus_users
-```
+
 
 **Note:** Replace `username`, `password`, `cluster.mongodb.net`, `ClusterName`, and `database_name` with your actual MongoDB Atlas credentials and cluster information.
 

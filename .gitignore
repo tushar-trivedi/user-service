@@ -32,5 +32,5 @@ build/
 ### VS Code ###
 .vscode/
 
-# Configuration with credentials - DO NOT COMMIT
-application.properties
+# Configuration with credentials - DO NOT COMMIT (recursive)
+**/application.properties

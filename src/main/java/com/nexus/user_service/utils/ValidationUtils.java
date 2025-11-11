@@ -100,7 +100,7 @@ public class ValidationUtils {
             return false;
         }
         
-        String[] validRoles = {"ADMIN", "USER", "SUPPLIER", "MODERATOR"};
+        String[] validRoles = {"ADMIN", "SUPPLIER", "FUNDER", "INVESTOR"};
         String upperRole = role.toUpperCase().trim();
         
         for (String validRole : validRoles) {
@@ -243,7 +243,7 @@ public class ValidationUtils {
         }
         for (String role : request.getRoles()) {
             if (!isValidRole(role)) {
-                return "Invalid role: " + role + ". Valid roles are: ADMIN, USER, SUPPLIER, MODERATOR";
+                return "Invalid role: " + role + ". Valid roles are: ADMIN, SUPPLIER, FUNDER, INVESTOR";
             }
         }
         

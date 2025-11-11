@@ -40,12 +40,31 @@ user-service/
 ## Core Features
 
 - **User Management**: Complete CRUD operations for user entities
+- **Role-Based Access**: Support for SUPPLIER, FUNDER, INVESTOR, and ADMIN roles
 - **User Validation**: Service-to-service credential validation for microservice authentication
 - **MongoDB Integration**: Document-based user storage with Spring Data MongoDB
 - **REST API**: Clean RESTful endpoints with proper HTTP status codes
 - **DTO Pattern**: Request/response DTOs for API security and data transfer
 - **Layered Architecture**: Controller → Service → Repository pattern
 - **Utility Classes**: Reusable utilities for logging, validation, mapping, and password hashing
+
+## User Roles
+
+### SUPPLIER
+- **Responsibilities**: List products, manage stock, confirm delivery
+- **Capabilities**: Product catalog management, inventory tracking, delivery confirmation
+
+### FUNDER  
+- **Responsibilities**: Create funding request, place order, pay supplier
+- **Capabilities**: Order placement, payment processing, funding request creation
+
+### INVESTOR
+- **Responsibilities**: Invest in requests, view profit share
+- **Capabilities**: Investment management, profit tracking, portfolio monitoring
+
+### ADMIN
+- **Responsibilities**: System administration and oversight
+- **Capabilities**: User management, system configuration, monitoring all operations
 
 ## API Endpoints
 
@@ -57,10 +76,11 @@ user-service/
 - **Request Body**:
 ```json
 {
-  "firstName": "string",
-  "lastName": "string", 
+  "name": "string",
   "email": "string",
-  "password": "string"
+  "password": "string",
+  "roles": ["SUPPLIER", "FUNDER", "INVESTOR", "ADMIN"],
+  "walletBalance": 0.00
 }
 ```
 - **Response**: `201 Created`
@@ -70,9 +90,11 @@ user-service/
   "message": "User created successfully",
   "data": {
     "id": "string",
-    "firstName": "string",
-    "lastName": "string",
+    "name": "string",
     "email": "string",
+    "roles": ["SUPPLIER"],
+    "verified": false,
+    "walletBalance": 0.00,
     "createdAt": "timestamp",
     "updatedAt": "timestamp"
   }
@@ -91,8 +113,7 @@ user-service/
   "data": [
     {
       "id": "string",
-      "firstName": "string", 
-      "lastName": "string",
+      "name": "string",
       "email": "string"
     }
   ]
@@ -109,9 +130,11 @@ user-service/
   "message": "User retrieved successfully",
   "data": {
     "id": "string",
-    "firstName": "string",
-    "lastName": "string", 
+    "name": "string",
     "email": "string",
+    "roles": ["SUPPLIER"],
+    "verified": false,
+    "walletBalance": 0.00,
     "createdAt": "timestamp",
     "updatedAt": "timestamp"
   }
@@ -125,9 +148,9 @@ user-service/
 - **Request Body**:
 ```json
 {
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string"
+  "name": "string",
+  "email": "string",
+  "walletBalance": 100.00
 }
 ```
 - **Response**: `200 OK`
@@ -137,9 +160,11 @@ user-service/
   "message": "User updated successfully", 
   "data": {
     "id": "string",
-    "firstName": "string",
-    "lastName": "string",
+    "name": "string",
     "email": "string",
+    "roles": ["SUPPLIER"],
+    "verified": false,
+    "walletBalance": 100.00,
     "createdAt": "timestamp",
     "updatedAt": "timestamp"
   }
@@ -176,9 +201,11 @@ user-service/
   "message": "User validation successful",
   "data": {
     "id": "string",
-    "firstName": "string",
-    "lastName": "string",
+    "name": "string",
     "email": "string",
+    "roles": ["SUPPLIER"],
+    "verified": false,
+    "walletBalance": 0.00,
     "createdAt": "timestamp",
     "updatedAt": "timestamp"
   }

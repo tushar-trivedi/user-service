@@ -239,7 +239,16 @@ user-service/
 
 ### Installation Steps
 
-1. **Install MongoDB using Homebrew**
+1. **Configure Database Connection**
+   ```bash
+   # Rename the template file by removing "template" from filename
+   mv src/main/resources/application-template.properties src/main/resources/application.properties
+   
+   # Edit application.properties with your actual MongoDB credentials
+   # Replace YOUR_USERNAME, YOUR_PASSWORD, YOUR_CLUSTER with actual values
+   ```
+
+2. **For Local MongoDB Setup**
    ```bash
    # Install Homebrew (if not already installed)
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -250,24 +259,31 @@ user-service/
    
    # Start MongoDB service
    brew services start mongodb/brew/mongodb-community
+   
+   # In application.properties, use:
+   # spring.data.mongodb.uri=mongodb://localhost:27017/nexus_users
    ```
 
-2. **Clone and Setup Project**
+3. **For MongoDB Atlas (Cloud)**
+   ```bash
+   # In application.properties, use your Atlas connection string:
+   # spring.data.mongodb.uri=mongodb+srv://username:password@cluster.mongodb.net/nexus_users?appName=YourApp
+   ```
+
+4. **Install Dependencies and Run**
    ```bash
    # Navigate to project directory
    cd user-service
    
    # Install dependencies
    mvn clean install
-   ```
-
-3. **Run the Application**
-   ```bash
+   
+   # Run the application
    mvn spring-boot:run
    ```
    The application will start on `http://localhost:3000`
 
-4. **Verify Setup**
+5. **Verify Setup**
    - MongoDB will automatically create the `nexus_users` database
    - Application logs will show successful MongoDB connection
    - Check logs for "Started UserServiceApplication" message

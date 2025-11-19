@@ -28,22 +28,35 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public User createUser(UserCreateRequestDTO request) {
-        logger.info("Creating user with email: {}", request.getEmail());
+        logger.info("Starting user creation process - Email: {}, Roles: {}", request.getEmail(), request.getRoles());
         
         // Check if user already exists
-        if (userRepository.existsByEmail(request.getEmail())) {
+        logger.debug("Checking if user exists with email: {}", request.getEmail());
+        boolean userExists = userRepository.existsByEmail(request.getEmail());
+        if (userExists) {
+            logger.warn("User creation failed - User already exists with email: {}", request.getEmail());
             throw new RuntimeException("User with email " + request.getEmail() + " already exists");
         }
+        logger.debug("Email availability confirmed - proceeding with user creation");
         
         // Use MapperUtils to convert DTO to User entity
+        logger.debug("Converting DTO to User entity");
         User user = MapperUtils.toUser(request);
+        
+        // Hash password
+        logger.debug("Generating password hash for user");
         user.setPasswordHash(PasswordUtils.hashPassword(request.getPassword()));
         user.setVerified(false);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         
+        logger.debug("Saving user to database - Email: {}, Roles: {}, Wallet Balance: {}", 
+            user.getEmail(), user.getRoles(), user.getWalletBalance());
         User savedUser = userRepository.save(user);
-        logger.info("User created successfully with ID: {}", savedUser.getId());
+        
+        logger.info("User created successfully - ID: {}, Email: {}, Roles: {}, Wallet Balance: {}, Verified: {}", 
+            savedUser.getId(), savedUser.getEmail(), savedUser.getRoles(), 
+            savedUser.getWalletBalance(), savedUser.isVerified());
         
         return savedUser;
     }
@@ -67,46 +80,102 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public List<User> getAllUsers() {
-        logger.info("Fetching all users");
-        return userRepository.findAll();
+        logger.info("Starting fetch all users operation");
+        logger.debug("Executing database query to retrieve all users");
+        
+        List<User> users = userRepository.findAll();
+        
+        logger.info("Retrieved {} users from database", users.size());
+        logger.debug("Users found with roles distribution - Total: {}", users.size());
+        
+        return users;
     }
     
     @Override
     public Optional<User> getUserById(String id) {
-        logger.info("Fetching user by ID: {}", id);
-        return userRepository.findById(id);
+        logger.info("Starting fetch user by ID operation - ID: {}", id);
+        logger.debug("Executing database query to find user by ID: {}", id);
+        
+        Optional<User> userOpt = userRepository.findById(id);
+        
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            logger.info("User found by ID - ID: {}, Email: {}, Roles: {}, Wallet Balance: {}", 
+                user.getId(), user.getEmail(), user.getRoles(), user.getWalletBalance());
+        } else {
+            logger.warn("No user found with ID: {}", id);
+        }
+        
+        return userOpt;
     }
     
     @Override
     public Optional<User> getUserByEmail(String email) {
-        logger.info("Fetching user by email: {}", email);
-        return userRepository.findByEmail(email);
+        logger.info("Starting fetch user by email operation - Email: {}", email);
+        logger.debug("Executing database query to find user by email: {}", email);
+        
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            logger.info("User found by email - ID: {}, Email: {}, Roles: {}, Verified: {}", 
+                user.getId(), user.getEmail(), user.getRoles(), user.isVerified());
+        } else {
+            logger.warn("No user found with email: {}", email);
+        }
+        
+        return userOpt;
     }
     
     @Override
     public User updateUser(String id, UserUpdateRequestDTO request) {
-        logger.info("Updating user with ID: {}", id);
+        logger.info("Starting user update process - ID: {}, Email: {}, Wallet Balance: {}, Wallet Adjustment: {}", 
+            id, request.getEmail(), request.getWalletBalance(), request.getWalletAdjustment());
         
+        logger.debug("Fetching user from database - ID: {}", id);
         Optional<User> userOpt = userRepository.findById(id);
         if (!userOpt.isPresent()) {
+            logger.warn("User update failed - User not found with ID: {}", id);
             throw new RuntimeException("User with ID " + id + " not found");
         }
         
         User user = userOpt.get();
+        logger.debug("User found - ID: {}, Current Email: {}, Current Wallet Balance: {}, Current Funding Requests: {}", 
+            user.getId(), user.getEmail(), user.getWalletBalance(), user.getFundingRequestIds().size());
         
         // Check if new email is already taken by another user
         if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
+            logger.debug("Checking email availability - New email: {}", request.getEmail());
             if (userRepository.existsByEmail(request.getEmail())) {
+                logger.warn("User update failed - Email already taken: {}", request.getEmail());
                 throw new RuntimeException("Email " + request.getEmail() + " is already taken");
             }
+            logger.debug("Email availability confirmed - Email: {}", request.getEmail());
+        }
+        
+        // Log wallet operations if present
+        if (request.getWalletAdjustment() != null) {
+            logger.info("Wallet adjustment operation - User ID: {}, Current Balance: {}, Adjustment: {}", 
+                id, user.getWalletBalance(), request.getWalletAdjustment());
+        }
+        
+        // Log funding request changes if present
+        if (request.getFundingRequestIds() != null) {
+            logger.info("Funding request update - User ID: {}, Current Funding Requests: {}, New Funding Requests: {}", 
+                id, user.getFundingRequestIds().size(), request.getFundingRequestIds().size());
         }
         
         // Use MapperUtils to update user from DTO
+        logger.debug("Updating user entity from DTO");
         MapperUtils.updateUserFromDTO(user, request);
         user.setUpdatedAt(LocalDateTime.now());
         
+        logger.debug("Saving updated user to database - ID: {}", id);
         User updatedUser = userRepository.save(user);
-        logger.info("User updated successfully: {}", updatedUser.getId());
+        
+        logger.info("User updated successfully - ID: {}, Email: {}, Wallet Balance: {}, Funding Requests: {}, Verified: {}", 
+            updatedUser.getId(), updatedUser.getEmail(), updatedUser.getWalletBalance(), 
+            updatedUser.getFundingRequestIds().size(), updatedUser.isVerified());
         
         return updatedUser;
     }

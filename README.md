@@ -1,322 +1,207 @@
 # User Service
 
-A Spring Boot microservice for user management and validation in a microservice architecture.
+A Spring Boot microservice for comprehensive user management, wallet operations, and credential validation in a microservice architecture.
+
+## Overview
+
+The User Service is a core component of the Nexus microservice ecosystem, providing centralized user management, wallet operations, and authentication services. It handles user lifecycle management, financial transactions, and service-to-service authentication for the entire platform.
+
+## Features
+
+- **Complete User Management** - CRUD operations for user accounts
+- **Role-Based Access Control** - Support for SUPPLIER, FUNDER, INVESTOR, and ADMIN roles
+- **Wallet Management** - Balance tracking with positive/negative adjustments and insufficient funds validation
+- **Funding Request Tracking** - Integration with investment service through funding request IDs
+- **Service Authentication** - Credential validation for microservice communication
+- **MongoDB Integration** - Document-based storage with Spring Data MongoDB
+- **Centralized Exception Handling** - Unified error management with proper HTTP status codes
+- **Comprehensive Validation** - Input validation and business rule enforcement
+
+## Technology Stack
+
+- **Java 17** - Programming language
+- **Spring Boot 3.x** - Application framework
+- **Spring Data MongoDB** - Database integration
+- **Maven** - Dependency management and build tool
+- **MongoDB** - Document database
+- **Bruno** - API testing and documentation
+- **SLF4J + Logback** - Logging framework
+
+## Quick Start
+
+1. **Clone and navigate to user-service**
+2. **Configure MongoDB connection** in `application.properties`
+3. **Run the service**: `mvn spring-boot:run`
+4. **Service runs on**: `http://localhost:3000`
+5. **API Documentation**: See [Integration Documentation](./INTEGRATION_DOCUMENTATION.md)
+
+## Prerequisites
+
+- **Java 17** or higher
+- **Maven 3.6+**
+- **MongoDB** (local installation or MongoDB Atlas)
+
+## Installation & Setup
+
+### Database Configuration
+
+1. **Rename configuration file**:
+   ```bash
+   mv src/main/resources/application-template.properties src/main/resources/application.properties
+   ```
+
+2. **For Local MongoDB**:
+   ```bash
+   # Install MongoDB via Homebrew
+   brew tap mongodb/brew
+   brew install mongodb-community
+   brew services start mongodb/brew/mongodb-community
+   ```
+   
+   Update `application.properties`:
+   ```properties
+   spring.data.mongodb.uri=mongodb://localhost:27017/nexus_users
+   ```
+
+3. **For MongoDB Atlas (Cloud)**:
+   ```properties
+   spring.data.mongodb.uri=mongodb+srv://username:password@cluster.mongodb.net/nexus_users?appName=YourApp
+   ```
+
+### Environment Setup
+
+```bash
+# Navigate to user-service directory
+cd user-service
+
+# Install dependencies
+mvn clean install
+
+# Run the application
+mvn spring-boot:run
+```
+
+The service will start on `http://localhost:3000` and automatically create the database collections.
 
 ## Project Structure
 
 ```
 user-service/
-├── pom.xml                     # Maven dependencies and build configuration
+├── pom.xml                           # Maven configuration
+├── README.md                         # This file
+├── INTEGRATION_DOCUMENTATION.md     # Complete API reference
+├── bruno-user-service/               # API test collection
 ├── src/main/java/com/nexus/user_service/
-│   ├── UserServiceApplication.java           # Spring Boot main application
+│   ├── UserServiceApplication.java   # Main application
 │   ├── controller/
-│   │   └── UserController.java              # REST API endpoints (/api/v1)
+│   │   └── UserController.java       # REST endpoints
 │   ├── service/
-│   │   ├── UserService.java                 # Service interface
-│   │   └── UserServiceImpl.java             # Service implementation
+│   │   ├── UserService.java          # Service interface
+│   │   └── UserServiceImpl.java      # Business logic
 │   ├── repository/
-│   │   └── UserRepository.java              # MongoDB data access layer
+│   │   └── UserRepository.java       # Data access layer
 │   ├── model/
-│   │   └── User.java                        # User entity/document model
+│   │   └── User.java                 # User entity model
 │   ├── dto/
-│   │   ├── request/                         # Request DTOs
-│   │   │   ├── UserCreateRequestDTO.java
-│   │   │   ├── UserUpdateRequestDTO.java
-│   │   │   └── UserValidationRequestDTO.java
-│   │   └── response/                        # Response DTOs
-│   │       ├── UserResponseDTO.java
-│   │       └── UserListResponseDTO.java
+│   │   ├── request/                  # Request DTOs
+│   │   └── response/                 # Response DTOs
 │   └── utils/
-│       ├── LoggerUtils.java                 # Centralized logging utility
-│       ├── MapperUtils.java                 # DTO mapping utility
-│       ├── PasswordUtils.java               # SHA-256 password hashing
-│       ├── ResponseUtils.java               # API response formatting
-│       └── ValidationUtils.java             # Input validation utility
-├── src/main/resources/
-│   └── application.properties               # MongoDB and logging configuration
-└── src/test/java/                          # Unit tests
+│       ├── ExceptionUtils.java       # Centralized exceptions
+│       ├── MapperUtils.java          # DTO mapping
+│       ├── ValidationUtils.java      # Input validation
+│       ├── ResponseUtils.java        # Response formatting
+│       ├── PasswordUtils.java        # Password hashing
+│       └── LoggerUtils.java          # Logging utilities
+└── src/main/resources/
+    └── application.properties        # Configuration
 ```
-
-## Core Features
-
-- **User Management**: Complete CRUD operations for user entities
-- **Role-Based Access**: Support for SUPPLIER, FUNDER, INVESTOR, and ADMIN roles
-- **User Validation**: Service-to-service credential validation for microservice authentication
-- **MongoDB Integration**: Document-based user storage with Spring Data MongoDB
-- **REST API**: Clean RESTful endpoints with proper HTTP status codes
-- **DTO Pattern**: Request/response DTOs for API security and data transfer
-- **Layered Architecture**: Controller → Service → Repository pattern
-- **Utility Classes**: Reusable utilities for logging, validation, mapping, and password hashing
 
 ## User Roles
 
 ### SUPPLIER
-- **Responsibilities**: List products, manage stock, confirm delivery
-- **Capabilities**: Product catalog management, inventory tracking, delivery confirmation
+- **Purpose**: Product and inventory management
+- **Capabilities**: List products, manage stock, confirm deliveries
+- **Integrations**: Product service, order service
 
 ### FUNDER  
-- **Responsibilities**: Create funding request, place order, pay supplier
-- **Capabilities**: Order placement, payment processing, funding request creation
+- **Purpose**: Funding and order management
+- **Capabilities**: Create funding requests, place orders, process payments
+- **Integrations**: Investment service, order service, payment service
 
 ### INVESTOR
-- **Responsibilities**: Invest in requests, view profit share
-- **Capabilities**: Investment management, profit tracking, portfolio monitoring
+- **Purpose**: Investment and profit tracking
+- **Capabilities**: Fund requests, monitor investments, track profit shares
+- **Integrations**: Investment service, payment service
 
 ### ADMIN
-- **Responsibilities**: System administration and oversight
-- **Capabilities**: User management, system configuration, monitoring all operations
-
-## API Endpoints
-
-### User Management
-
-#### Create User
-- **POST** `/api/v1/users`
-- **Description**: Create a new user account
-- **Request Body**:
-```json
-{
-  "name": "string",
-  "email": "string",
-  "password": "string",
-  "roles": ["SUPPLIER", "FUNDER", "INVESTOR", "ADMIN"],
-  "walletBalance": 0.00
-}
-```
-- **Response**: `201 Created`
-```json
-{
-  "success": true,
-  "message": "User created successfully",
-  "data": {
-    "id": "string",
-    "name": "string",
-    "email": "string",
-    "roles": ["SUPPLIER"],
-    "verified": false,
-    "walletBalance": 0.00,
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp"
-  }
-}
-```
-- **Error Responses**: `400 Bad Request` (validation errors, duplicate email)
-
-#### Get All Users
-- **GET** `/api/v1/users`
-- **Description**: Retrieve all users (limited fields)
-- **Response**: `200 OK`
-```json
-{
-  "success": true,
-  "message": "Users retrieved successfully",
-  "data": [
-    {
-      "id": "string",
-      "name": "string",
-      "email": "string"
-    }
-  ]
-}
-```
-
-#### Get User by ID
-- **GET** `/api/v1/users/{id}`
-- **Description**: Retrieve a specific user by ID
-- **Response**: `200 OK`
-```json
-{
-  "success": true,
-  "message": "User retrieved successfully",
-  "data": {
-    "id": "string",
-    "name": "string",
-    "email": "string",
-    "roles": ["SUPPLIER"],
-    "verified": false,
-    "walletBalance": 0.00,
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp"
-  }
-}
-```
-- **Error Responses**: `404 Not Found`, `400 Bad Request` (invalid ID format)
-
-#### Update User
-- **PUT** `/api/v1/users/{id}`
-- **Description**: Update user information
-- **Request Body**:
-```json
-{
-  "name": "string",
-  "email": "string",
-  "walletBalance": 100.00
-}
-```
-- **Response**: `200 OK`
-```json
-{
-  "success": true,
-  "message": "User updated successfully", 
-  "data": {
-    "id": "string",
-    "name": "string",
-    "email": "string",
-    "roles": ["SUPPLIER"],
-    "verified": false,
-    "walletBalance": 100.00,
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp"
-  }
-}
-```
-- **Error Responses**: `404 Not Found`, `400 Bad Request` (validation errors)
-
-#### Delete User
-- **DELETE** `/api/v1/users/{id}`
-- **Description**: Delete a user account
-- **Response**: `200 OK`
-```json
-{
-  "success": true,
-  "message": "User deleted successfully"
-}
-```
-- **Error Responses**: `404 Not Found`, `400 Bad Request` (invalid ID format)
-
-#### Validate User
-- **POST** `/api/v1/auth/validate-user`
-- **Description**: Validate user credentials for service-to-service authentication
-- **Request Body**:
-```json
-{
-  "email": "string",
-  "password": "string"
-}
-```
-- **Response**: `200 OK`
-```json
-{
-  "success": true,
-  "message": "User validation successful",
-  "data": {
-    "id": "string",
-    "name": "string",
-    "email": "string",
-    "roles": ["SUPPLIER"],
-    "verified": false,
-    "walletBalance": 0.00,
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp"
-  }
-}
-```
-- **Error Responses**: `401 Unauthorized` (invalid credentials), `400 Bad Request` (validation errors)
-
-
-#### Health Check
-- **GET** `/api/v1/health`
-- **Description**: Service health status
-- **Response**: `200 OK`
-```json
-{
-  "success": true,
-  "message": "Service is healthy",
-  "data": {
-    "status": "UP",
-    "service": "user-service", 
-    "timestamp": 1699123456789
-  }
-}
-```
-
-## Local Setup
-
-### Prerequisites
-- Java 17 or higher
-- Maven 3.6+
-- MongoDB (installed via Homebrew)
-
-### Installation Steps
-
-1. **Configure Database Connection**
-   ```bash
-   # Rename the template file by removing "template" from filename
-   mv src/main/resources/application-template.properties src/main/resources/application.properties
-   
-   # Edit application.properties with your actual MongoDB credentials
-   # Replace YOUR_USERNAME, YOUR_PASSWORD, YOUR_CLUSTER with actual values
-   ```
-
-2. **For Local MongoDB Setup**
-   ```bash
-   # Install Homebrew (if not already installed)
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   
-   # Install MongoDB
-   brew tap mongodb/brew
-   brew install mongodb-community
-   
-   # Start MongoDB service
-   brew services start mongodb/brew/mongodb-community
-   
-   # In application.properties, use:
-   # spring.data.mongodb.uri=mongodb://localhost:27017/nexus_users
-   ```
-
-3. **For MongoDB Atlas (Cloud)**
-   ```bash
-   # In application.properties, use your Atlas connection string:
-   # spring.data.mongodb.uri=mongodb+srv://username:password@cluster.mongodb.net/nexus_users?appName=YourApp
-   ```
-
-4. **Install Dependencies and Run**
-   ```bash
-   # Navigate to project directory
-   cd user-service
-   
-   # Install dependencies
-   mvn clean install
-   
-   # Run the application
-   mvn spring-boot:run
-   ```
-   The application will start on `http://localhost:3000`
-
-5. **Verify Setup**
-   - MongoDB will automatically create the `nexus_users` database
-   - Application logs will show successful MongoDB connection
-   - Check logs for "Started UserServiceApplication" message
+- **Purpose**: System administration
+- **Capabilities**: User management, system oversight, configuration management
+- **Integrations**: All services (administrative access)
 
 ## Configuration
 
-### MongoDB Configuration
-Located in `src/main/resources/application.properties`:
+### Application Properties
 ```properties
 # MongoDB Configuration
-spring.data.mongodb.uri=mongodb://localhost:27017/database_name
+spring.data.mongodb.uri=mongodb://localhost:27017/nexus_users
+
+# Server Configuration
+server.port=3000
 
 # Logging Configuration
 logging.level.com.nexus.user_service=DEBUG
 logging.level.org.springframework.data.mongodb=DEBUG
 ```
 
-### For Deployed MongoDB
-To connect to a deployed MongoDB instance (MongoDB Atlas):
-1. Update the `spring.data.mongodb.uri` in `application.properties`
-2. Use the MongoDB Atlas connection string format:
-   ```properties
-   spring.data.mongodb.uri=mongodb+srv://username:password@cluster.mongodb.net/?appName=ClusterName/database_name
-   ```
+### Environment Variables
+- `MONGODB_URI` - Override MongoDB connection string
+- `SERVER_PORT` - Override default port (3000)
+- `LOG_LEVEL` - Override logging level
 
+## API Documentation
 
-**Note:** Replace `username`, `password`, `cluster.mongodb.net`, `ClusterName`, and `database_name` with your actual MongoDB Atlas credentials and cluster information.
+For complete API integration details, request/response examples, and developer guidance, see:
+**[📖 Integration Documentation](./INTEGRATION_DOCUMENTATION.md)**
+
+## Testing
+
+The service includes a comprehensive Bruno API test collection located in `bruno-user-service/`. This collection includes:
+- All CRUD operations
+- Wallet management scenarios
+- Funding request ID operations
+- Error condition testing
+- Authentication validation
+
+To run tests:
+1. Install Bruno API testing tool
+2. Import the `bruno-user-service` collection
+3. Configure the local environment
+4. Execute test scenarios
 
 ## Microservice Architecture
 
-This service is designed as part of a microservice ecosystem:
-- **User Management**: Handles user CRUD operations
-- **User Validation**: Provides credential validation for other services
-- **Service Separation**: Authentication logic is handled by separate auth service
-- **Clean API**: RESTful endpoints with consistent response formats
-- **Stateless**: No session management, suitable for distributed systems
+This service integrates with:
+- **API Gateway** - Authentication and routing
+- **Investment Service** - Funding request management
+- **Order Service** - User order processing
+- **Payment Service** - Financial transactions
+- **Product Service** - User-product interactions
+
+## Recent Enhancements
+
+- ✅ **Wallet Adjustments** - Positive/negative amount operations with validation
+- ✅ **Funding Request IDs** - Investment service integration tracking
+- ✅ **Centralized Exceptions** - Unified error handling with proper HTTP status codes
+- ✅ **Enhanced Validation** - Comprehensive input and business rule validation
+
+## Contributing
+
+1. Follow the existing code structure and patterns
+2. Update tests for new features
+3. Update documentation for API changes
+4. Follow Spring Boot best practices
+5. Use the established DTO mapping patterns
+
+## Health Check
+
+Service health is available at `GET /api/v1/health` for monitoring and deployment verification.

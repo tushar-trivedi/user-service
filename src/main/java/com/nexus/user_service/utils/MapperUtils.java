@@ -54,6 +54,7 @@ public class MapperUtils {
         dto.setRoles(user.getRoles());
         dto.setVerified(user.isVerified());
         dto.setWalletBalance(user.getWalletBalance());
+        dto.setFundingRequestIds(user.getFundingRequestIds());
         dto.setCreatedAt(user.getCreatedAt());
         dto.setUpdatedAt(user.getUpdatedAt());
         // Note: passwordHash is NOT included for security
@@ -117,6 +118,17 @@ public class MapperUtils {
             user.setWalletBalance(dto.getWalletBalance());
         }
         
+        if (dto.getFundingRequestIds() != null) {
+            List<String> existingIds = user.getFundingRequestIds();
+            
+            // Append each new ID if it doesn't already exist (avoid duplicates)
+            for (String newId : dto.getFundingRequestIds()) {
+                if (!existingIds.contains(newId)) {
+                    existingIds.add(newId);
+                }
+            }
+        }
+        
         user.setUpdatedAt(LocalDateTime.now());
     }
     
@@ -153,8 +165,13 @@ public class MapperUtils {
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
+        dto.setRoles(user.getRoles());
+        dto.setVerified(user.isVerified());
         dto.setWalletBalance(user.getWalletBalance());
-        // Note: Now includes wallet balance in GET by ID response
+        dto.setFundingRequestIds(user.getFundingRequestIds());
+        dto.setCreatedAt(user.getCreatedAt());
+        dto.setUpdatedAt(user.getUpdatedAt());
+        // Note: Now includes all fields in GET by ID response
         
         return dto;
     }

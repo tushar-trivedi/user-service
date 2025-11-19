@@ -267,8 +267,9 @@ public class ValidationUtils {
         }
         
         // At least one field should be provided
-        if (isNullOrEmpty(request.getName()) && isNullOrEmpty(request.getEmail()) && request.getWalletBalance() == null) {
-            return "At least one field (name, email, or walletBalance) must be provided for update";
+        if (isNullOrEmpty(request.getName()) && isNullOrEmpty(request.getEmail()) && 
+            request.getWalletBalance() == null && request.getFundingRequestIds() == null) {
+            return "At least one field (name, email, walletBalance, or fundingRequestIds) must be provided for update";
         }
         
         // Validate name if provided

@@ -1,12 +1,14 @@
 package com.nexus.user_service.dto.request;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class UserUpdateRequestDTO {
     
     private String name;
     private String email;
     private BigDecimal walletBalance; // Optional field for wallet updates
+    private List<String> fundingRequestIds; // Optional field for funding request updates
     
     // Default constructor
     public UserUpdateRequestDTO() {}
@@ -22,6 +24,14 @@ public class UserUpdateRequestDTO {
         this.name = name;
         this.email = email;
         this.walletBalance = walletBalance;
+    }
+    
+    // Constructor with all fields including funding request IDs
+    public UserUpdateRequestDTO(String name, String email, BigDecimal walletBalance, List<String> fundingRequestIds) {
+        this.name = name;
+        this.email = email;
+        this.walletBalance = walletBalance;
+        this.fundingRequestIds = fundingRequestIds;
     }
     
     // Getters and Setters
@@ -49,12 +59,21 @@ public class UserUpdateRequestDTO {
         this.walletBalance = walletBalance;
     }
     
+    public List<String> getFundingRequestIds() {
+        return fundingRequestIds;
+    }
+    
+    public void setFundingRequestIds(List<String> fundingRequestIds) {
+        this.fundingRequestIds = fundingRequestIds;
+    }
+    
     @Override
     public String toString() {
         return "UserUpdateRequestDTO{" +
                 "name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", walletBalance=" + walletBalance +
+                ", fundingRequestIds=" + fundingRequestIds +
                 '}';
     }
 }

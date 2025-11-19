@@ -12,6 +12,7 @@ public class UserResponseDTO {
     private List<String> roles;
     private boolean verified;
     private BigDecimal walletBalance;
+    private List<String> fundingRequestIds;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
@@ -20,13 +21,15 @@ public class UserResponseDTO {
     
     // Constructor with all fields
     public UserResponseDTO(String id, String name, String email, List<String> roles, 
-                          boolean verified, BigDecimal walletBalance, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                          boolean verified, BigDecimal walletBalance, List<String> fundingRequestIds,
+                          LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.roles = roles;
         this.verified = verified;
         this.walletBalance = walletBalance;
+        this.fundingRequestIds = fundingRequestIds;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -80,6 +83,14 @@ public class UserResponseDTO {
         this.walletBalance = walletBalance;
     }
     
+    public List<String> getFundingRequestIds() {
+        return fundingRequestIds;
+    }
+    
+    public void setFundingRequestIds(List<String> fundingRequestIds) {
+        this.fundingRequestIds = fundingRequestIds;
+    }
+    
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -105,6 +116,7 @@ public class UserResponseDTO {
                 ", roles=" + roles +
                 ", verified=" + verified +
                 ", walletBalance=" + walletBalance +
+                ", fundingRequestIds=" + fundingRequestIds +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

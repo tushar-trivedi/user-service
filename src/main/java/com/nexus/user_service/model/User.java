@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
 @Document(collection = "users")
 public class User {
@@ -21,7 +22,7 @@ public class User {
     
     private String passwordHash;
     
-    private List<String> roles; // ["SUPPLIER", "ADMIN", etc.]
+    private List<String> roles;
     
     private boolean verified;
     
@@ -31,12 +32,15 @@ public class User {
     
     private LocalDateTime updatedAt;
     
+    private List<String> fundingRequestIds;
+    
     // Default constructor
     public User() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         this.verified = false;
         this.walletBalance = BigDecimal.ZERO;
+        this.fundingRequestIds = new ArrayList<>();
     }
     
     // Constructor with required fields
@@ -127,6 +131,37 @@ public class User {
         this.updatedAt = updatedAt;
     }
     
+    public List<String> getFundingRequestIds() {
+        return fundingRequestIds;
+    }
+    
+    public void setFundingRequestIds(List<String> fundingRequestIds) {
+        this.fundingRequestIds = fundingRequestIds != null ? fundingRequestIds : new ArrayList<>();
+        this.updatedAt = LocalDateTime.now();
+    }
+    
+    // Helper methods for managing funding request IDs
+    public void addFundingRequestId(String fundingRequestId) {
+        if (this.fundingRequestIds == null) {
+            this.fundingRequestIds = new ArrayList<>();
+        }
+        if (fundingRequestId != null && !this.fundingRequestIds.contains(fundingRequestId)) {
+            this.fundingRequestIds.add(fundingRequestId);
+            this.updatedAt = LocalDateTime.now();
+        }
+    }
+    
+    public boolean removeFundingRequestId(String fundingRequestId) {
+        if (this.fundingRequestIds != null && fundingRequestId != null) {
+            boolean removed = this.fundingRequestIds.remove(fundingRequestId);
+            if (removed) {
+                this.updatedAt = LocalDateTime.now();
+            }
+            return removed;
+        }
+        return false;
+    }
+    
     @Override
     public String toString() {
         return "User{" +
@@ -136,6 +171,7 @@ public class User {
                 ", roles=" + roles +
                 ", verified=" + verified +
                 ", walletBalance=" + walletBalance +
+                ", fundingRequestIds=" + fundingRequestIds +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

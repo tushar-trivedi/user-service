@@ -11,6 +11,7 @@ import com.nexus.user_service.utils.LoggerUtils;
 import com.nexus.user_service.utils.ValidationUtils;
 import com.nexus.user_service.utils.ResponseUtils;
 import com.nexus.user_service.utils.MapperUtils;
+import com.nexus.user_service.utils.ExceptionUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -189,6 +190,9 @@ public class UserController {
             logger.info("User updated successfully: {}", updatedUser.getId());
             return ResponseEntity.ok(ResponseUtils.success("User updated successfully", response));
             
+        } catch (ExceptionUtils.InsufficientFundsException e) {
+            logger.warn("Insufficient funds for user {}: {}", id, e.getMessage());
+            return ResponseEntity.badRequest().body(ResponseUtils.error(e.getMessage()));
         } catch (RuntimeException e) {
             logger.error("Error updating user: {}", e.getMessage());
             

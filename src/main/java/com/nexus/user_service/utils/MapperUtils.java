@@ -118,6 +118,22 @@ public class MapperUtils {
             user.setWalletBalance(dto.getWalletBalance());
         }
         
+        // Handle wallet adjustment (add/deduct from current balance)
+        if (dto.getWalletAdjustment() != null) {
+            BigDecimal adjustment = dto.getWalletAdjustment();
+            BigDecimal currentBalance = user.getWalletBalance();
+            BigDecimal newBalance = currentBalance.add(adjustment);
+            
+            // Check for insufficient funds on deduction (negative adjustment)
+            if (adjustment.compareTo(BigDecimal.ZERO) < 0 && 
+                newBalance.compareTo(BigDecimal.ZERO) < 0) {
+                
+                throw new ExceptionUtils.InsufficientFundsException(currentBalance, adjustment);
+            }
+            
+            user.setWalletBalance(newBalance);
+        }
+        
         if (dto.getFundingRequestIds() != null) {
             List<String> existingIds = user.getFundingRequestIds();
             

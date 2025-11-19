@@ -7,7 +7,8 @@ public class UserUpdateRequestDTO {
     
     private String name;
     private String email;
-    private BigDecimal walletBalance; // Optional field for wallet updates
+    private BigDecimal walletBalance; // Optional field for wallet updates (direct set)
+    private BigDecimal walletAdjustment; // Optional field for wallet adjustments (+/- amounts)
     private List<String> fundingRequestIds; // Optional field for funding request updates
     
     // Default constructor
@@ -59,6 +60,14 @@ public class UserUpdateRequestDTO {
         this.walletBalance = walletBalance;
     }
     
+    public BigDecimal getWalletAdjustment() {
+        return walletAdjustment;
+    }
+    
+    public void setWalletAdjustment(BigDecimal walletAdjustment) {
+        this.walletAdjustment = walletAdjustment;
+    }
+    
     public List<String> getFundingRequestIds() {
         return fundingRequestIds;
     }
@@ -73,6 +82,7 @@ public class UserUpdateRequestDTO {
                 "name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", walletBalance=" + walletBalance +
+                ", walletAdjustment=" + walletAdjustment +
                 ", fundingRequestIds=" + fundingRequestIds +
                 '}';
     }

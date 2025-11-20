@@ -27,7 +27,6 @@ public class MapperUtils {
         user.setName(ValidationUtils.sanitizeInput(dto.getName()));
         user.setEmail(dto.getEmail().toLowerCase().trim());
         user.setRoles(dto.getRoles());
-        user.setVerified(false);
         // Set wallet balance from DTO or default to 0
         user.setWalletBalance(dto.getWalletBalance() != null ? dto.getWalletBalance() : BigDecimal.ZERO);
         user.setCreatedAt(LocalDateTime.now());
@@ -52,7 +51,6 @@ public class MapperUtils {
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setRoles(user.getRoles());
-        dto.setVerified(user.isVerified());
         dto.setWalletBalance(user.getWalletBalance());
         dto.setFundingRequestIds(user.getFundingRequestIds());
         dto.setCreatedAt(user.getCreatedAt());
@@ -182,7 +180,6 @@ public class MapperUtils {
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setRoles(user.getRoles());
-        dto.setVerified(user.isVerified());
         dto.setWalletBalance(user.getWalletBalance());
         dto.setFundingRequestIds(user.getFundingRequestIds());
         dto.setCreatedAt(user.getCreatedAt());

@@ -46,7 +46,6 @@ public class UserServiceImpl implements UserService {
         // Hash password
         logger.debug("Generating password hash for user");
         user.setPasswordHash(PasswordUtils.hashPassword(request.getPassword()));
-        user.setVerified(false);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         
@@ -54,9 +53,9 @@ public class UserServiceImpl implements UserService {
             user.getEmail(), user.getRoles(), user.getWalletBalance());
         User savedUser = userRepository.save(user);
         
-        logger.info("User created successfully - ID: {}, Email: {}, Roles: {}, Wallet Balance: {}, Verified: {}", 
+        logger.info("User created successfully - ID: {}, Email: {}, Roles: {}, Wallet Balance: {}", 
             savedUser.getId(), savedUser.getEmail(), savedUser.getRoles(), 
-            savedUser.getWalletBalance(), savedUser.isVerified());
+            savedUser.getWalletBalance());
         
         return savedUser;
     }
@@ -118,8 +117,8 @@ public class UserServiceImpl implements UserService {
         
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            logger.info("User found by email - ID: {}, Email: {}, Roles: {}, Verified: {}", 
-                user.getId(), user.getEmail(), user.getRoles(), user.isVerified());
+            logger.info("User found by email - ID: {}, Email: {}, Roles: {}", 
+                user.getId(), user.getEmail(), user.getRoles());
         } else {
             logger.warn("No user found with email: {}", email);
         }
@@ -173,9 +172,9 @@ public class UserServiceImpl implements UserService {
         logger.debug("Saving updated user to database - ID: {}", id);
         User updatedUser = userRepository.save(user);
         
-        logger.info("User updated successfully - ID: {}, Email: {}, Wallet Balance: {}, Funding Requests: {}, Verified: {}", 
+        logger.info("User updated successfully - ID: {}, Email: {}, Wallet Balance: {}, Funding Requests: {}", 
             updatedUser.getId(), updatedUser.getEmail(), updatedUser.getWalletBalance(), 
-            updatedUser.getFundingRequestIds().size(), updatedUser.isVerified());
+            updatedUser.getFundingRequestIds().size());
         
         return updatedUser;
     }
@@ -197,25 +196,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean userExistsByEmail(String email) {
         return userRepository.existsByEmail(email);
-    }
-    
-    @Override
-    public User verifyUser(String id) {
-        logger.info("Verifying user with ID: {}", id);
-        
-        Optional<User> userOpt = userRepository.findById(id);
-        if (!userOpt.isPresent()) {
-            throw new RuntimeException("User with ID " + id + " not found");
-        }
-        
-        User user = userOpt.get();
-        user.setVerified(true);
-        user.setUpdatedAt(LocalDateTime.now());
-        
-        User verifiedUser = userRepository.save(user);
-        logger.info("User verified successfully: {}", verifiedUser.getId());
-        
-        return verifiedUser;
     }
     
     @Override

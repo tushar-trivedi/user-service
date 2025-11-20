@@ -10,7 +10,6 @@ public class UserResponseDTO {
     private String name;
     private String email;
     private List<String> roles;
-    private boolean verified;
     private BigDecimal walletBalance;
     private List<String> fundingRequestIds;
     private LocalDateTime createdAt;
@@ -21,13 +20,12 @@ public class UserResponseDTO {
     
     // Constructor with all fields
     public UserResponseDTO(String id, String name, String email, List<String> roles, 
-                          boolean verified, BigDecimal walletBalance, List<String> fundingRequestIds,
+                          BigDecimal walletBalance, List<String> fundingRequestIds,
                           LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.roles = roles;
-        this.verified = verified;
         this.walletBalance = walletBalance;
         this.fundingRequestIds = fundingRequestIds;
         this.createdAt = createdAt;
@@ -67,13 +65,6 @@ public class UserResponseDTO {
         this.roles = roles;
     }
     
-    public boolean isVerified() {
-        return verified;
-    }
-    
-    public void setVerified(boolean verified) {
-        this.verified = verified;
-    }
     
     public BigDecimal getWalletBalance() {
         return walletBalance;
@@ -114,7 +105,6 @@ public class UserResponseDTO {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", roles=" + roles +
-                ", verified=" + verified +
                 ", walletBalance=" + walletBalance +
                 ", fundingRequestIds=" + fundingRequestIds +
                 ", createdAt=" + createdAt +

@@ -24,8 +24,6 @@ public class User {
     
     private List<String> roles;
     
-    private boolean verified;
-    
     private BigDecimal walletBalance;
     
     private LocalDateTime createdAt;
@@ -38,7 +36,6 @@ public class User {
     public User() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        this.verified = false;
         this.walletBalance = BigDecimal.ZERO;
         this.fundingRequestIds = new ArrayList<>();
     }
@@ -97,14 +94,6 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
     
-    public boolean isVerified() {
-        return verified;
-    }
-    
-    public void setVerified(boolean verified) {
-        this.verified = verified;
-        this.updatedAt = LocalDateTime.now();
-    }
     
     public LocalDateTime getCreatedAt() {
         return createdAt;
@@ -169,7 +158,6 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", roles=" + roles +
-                ", verified=" + verified +
                 ", walletBalance=" + walletBalance +
                 ", fundingRequestIds=" + fundingRequestIds +
                 ", createdAt=" + createdAt +

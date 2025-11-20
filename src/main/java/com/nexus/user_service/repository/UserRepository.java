@@ -34,12 +34,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     List<User> findByRole(String role);
     
     /**
-     * Find all verified users
-     * @return List<User>
-     */
-    List<User> findByVerified(boolean verified);
-    
-    /**
      * Find users by name containing (case insensitive)
      * @param name the name pattern to search for
      * @return List<User>

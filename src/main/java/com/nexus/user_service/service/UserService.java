@@ -72,14 +72,6 @@ public interface UserService {
     boolean userExistsByEmail(String email);
     
     /**
-     * Verify user account
-     * @param id user's ID
-     * @return updated User
-     * @throws RuntimeException if user not found
-     */
-    User verifyUser(String id);
-    
-    /**
      * Get users by role
      * @param role the role to search for
      * @return List<User>

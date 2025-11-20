@@ -11,6 +11,7 @@ The User Service is a core component of the Nexus microservice ecosystem, provid
 - **Complete User Management** - CRUD operations for user accounts
 - **Role-Based Access Control** - Support for SUPPLIER, FUNDER, INVESTOR, and ADMIN roles
 - **Wallet Management** - Balance tracking with positive/negative adjustments and insufficient funds validation
+- **Wallet Operations** - Deposit and withdraw via payment service integration with UPI ID generation
 - **Funding Request Tracking** - Integration with investment service through funding request IDs
 - **Service Authentication** - Credential validation for microservice communication
 - **MongoDB Integration** - Document-based storage with Spring Data MongoDB
@@ -22,6 +23,7 @@ The User Service is a core component of the Nexus microservice ecosystem, provid
 - **Java 17** - Programming language
 - **Spring Boot 3.x** - Application framework
 - **Spring Data MongoDB** - Database integration
+- **Spring WebFlux** - Reactive web client for payment service integration
 - **Maven** - Dependency management and build tool
 - **MongoDB** - Document database
 - **Bruno** - API testing and documentation
@@ -184,7 +186,7 @@ This service integrates with:
 - **API Gateway** - Authentication and routing
 - **Investment Service** - Funding request management
 - **Order Service** - User order processing
-- **Payment Service** - Financial transactions
+- **Payment Service** - Wallet deposit and withdrawal operations via proxy endpoints
 - **Product Service** - User-product interactions
 
 ## Recent Enhancements
@@ -193,6 +195,7 @@ This service integrates with:
 - ✅ **Funding Request IDs** - Investment service integration tracking
 - ✅ **Centralized Exceptions** - Unified error handling with proper HTTP status codes
 - ✅ **Enhanced Validation** - Comprehensive input and business rule validation
+- ✅ **Wallet Integration** - Deposit/withdraw endpoints with payment service proxy pattern and UPI ID generation
 
 ## Contributing
 

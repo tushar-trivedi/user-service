@@ -19,6 +19,8 @@ Complete API reference for developers integrating with the User Service microser
 | [Update user information](#update-user) | PUT | `/users/{id}` | 200, 400, 404 |
 | [Delete user account](#delete-user) | DELETE | `/users/{id}` | 200, 400, 404, 500 |
 | [Validate user credentials](#validate-user) | POST | `/auth/user/validate` | 200, 400, 401 |
+| [Deposit money to wallet](#wallet-deposit) | POST | `/wallet/deposit` | 200, 400, 404, 500 |
+| [Withdraw money from wallet](#wallet-withdraw) | POST | `/wallet/withdraw` | 200, 400, 404, 500 |
 | [Service health check](#health-check) | GET | `/health` | 200 |
 
 ---
@@ -433,6 +435,153 @@ GET /api/v1/health
     "timestamp": 1700420567890
   },
   "timestamp": "2025-11-19T20:50:05.123"
+}
+```
+
+---
+
+## Wallet Operations
+
+### Wallet Deposit
+
+**POST** `/api/v1/wallet/deposit`
+
+Deposit money to user's wallet via payment service integration. This endpoint acts as a proxy to the external payment service, validating the user exists and forwarding the request.
+
+#### Request
+```http
+POST /api/v1/wallet/deposit
+Content-Type: application/json
+X-User-Id: 674c8b3d1234567890abcdef
+
+{
+  "amount": 1000.00
+}
+```
+
+#### Request Headers
+- `X-User-Id` (string, required): MongoDB ObjectId of the user (24 hex characters)
+
+#### Request Fields  
+- `amount` (number, required): Amount to deposit (must be positive)
+
+#### Success Response (200 OK)
+```json
+{
+  "paymentId": "pay_12345678901234567890",
+  "status": "SUCCESS",
+  "amount": 1000.00,
+  "currency": "INR",
+  "method": "UPI",
+  "timestamp": "2025-11-21T02:15:30.123Z",
+  "message": "Payment processed successfully"
+}
+```
+
+#### Error Responses
+```json
+// 400 Bad Request - Invalid Amount
+{
+  "success": false,
+  "error": "Amount must be positive",
+  "timestamp": "2025-11-21T02:15:30.456"
+}
+
+// 400 Bad Request - Invalid User ID Format
+{
+  "success": false,
+  "error": "Invalid user ID format",
+  "timestamp": "2025-11-21T02:15:30.456"
+}
+
+// 404 Not Found - User Not Found
+{
+  "success": false,
+  "error": "User not found",
+  "timestamp": "2025-11-21T02:15:30.456"
+}
+
+// 500 Internal Server Error - Payment Service Error
+{
+  "success": false,
+  "error": "Payment service unavailable",
+  "timestamp": "2025-11-21T02:15:30.456"
+}
+```
+
+---
+
+### Wallet Withdraw
+
+**POST** `/api/v1/wallet/withdraw`
+
+Withdraw money from user's wallet via payout service integration. This endpoint validates the user exists, generates a UPI ID from the user's name, and forwards the request to the payout service.
+
+#### Request
+```http
+POST /api/v1/wallet/withdraw
+Content-Type: application/json
+X-User-Id: 674c8b3d1234567890abcdef
+
+{
+  "amount": 500.00
+}
+```
+
+#### Request Headers
+- `X-User-Id` (string, required): MongoDB ObjectId of the user (24 hex characters)
+
+#### Request Fields
+- `amount` (number, required): Amount to withdraw (must be positive)
+
+#### UPI ID Generation
+The system automatically generates a UPI ID by sanitizing the user's name:
+- Converts to lowercase
+- Removes all non-alphanumeric characters
+- Appends "@upi" suffix
+- Example: "John Doe Jr." → "johndoejr@upi"
+
+#### Success Response (200 OK)
+```json
+{
+  "payoutId": "payout_09876543210987654321",
+  "status": "SUCCESS", 
+  "amount": 500.00,
+  "currency": "INR",
+  "upiId": "johndoejr@upi",
+  "timestamp": "2025-11-21T02:20:45.678Z",
+  "message": "Payout processed successfully"
+}
+```
+
+#### Error Responses
+```json
+// 400 Bad Request - Invalid Amount
+{
+  "success": false,
+  "error": "Amount must be positive",
+  "timestamp": "2025-11-21T02:20:45.678"
+}
+
+// 400 Bad Request - Invalid User ID Format  
+{
+  "success": false,
+  "error": "Invalid user ID format",
+  "timestamp": "2025-11-21T02:20:45.678"
+}
+
+// 404 Not Found - User Not Found
+{
+  "success": false,
+  "error": "User not found", 
+  "timestamp": "2025-11-21T02:20:45.678"
+}
+
+// 500 Internal Server Error - Payout Service Error
+{
+  "success": false,
+  "error": "Payout service unavailable",
+  "timestamp": "2025-11-21T02:20:45.678"
 }
 ```
 

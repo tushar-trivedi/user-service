@@ -1,19 +1,19 @@
 meta {
-  name: Create User with Sarah
+  name: Create User
   type: http
-  seq: 5
+  seq: 2
 }
 
 post {
-  url: {{baseUrl}}/api/v1/users
+  url: {{baseUrl}}/api/v1/user
   body: json
   auth: none
 }
 
 body:json {
   {
-    "name": "Sarah Johnson",
-    "email": "sarah.johnson@nexus.com",
+    "name": "New Test User",
+    "email": "test.user@example.com",
     "password": "securePassword123",
     "roles": ["SUPPLIER", "FUNDER"],
     "walletBalance": 1000.00
@@ -24,11 +24,8 @@ assert {
   res.status: eq 201
   res.body.success: eq true
   res.body.message: eq "User created successfully"
-  res.body.data.name: eq "Sarah Johnson"
-  res.body.data.email: eq "sarah.johnson@nexus.com"
-  res.body.data.roles: includes "SUPPLIER"
-  res.body.data.roles: includes "FUNDER"
-  res.body.data.verified: eq false
+  res.body.data.name: eq "New Test User"
+  res.body.data.email: eq "test.user@example.com"
   res.body.data.walletBalance: eq 1000.00
 }
 

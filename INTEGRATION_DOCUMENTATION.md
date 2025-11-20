@@ -13,12 +13,12 @@ Complete API reference for developers integrating with the User Service microser
 
 | Purpose | Method | Endpoint | Status Codes |
 |---------|--------|----------|--------------|
-| [Create new user account](#create-user) | POST | `/users` | 201, 400 |
+| [Create new user account](#create-user) | POST | `/user` | 201, 400 |
 | [Get all users (list view)](#get-all-users) | GET | `/users` | 200, 500 |
 | [Get user by ID (detailed)](#get-user-by-id) | GET | `/users/{id}` | 200, 400, 404 |
 | [Update user information](#update-user) | PUT | `/users/{id}` | 200, 400, 404 |
 | [Delete user account](#delete-user) | DELETE | `/users/{id}` | 200, 400, 404, 500 |
-| [Validate user credentials](#validate-user) | POST | `/auth/validate-user` | 200, 400, 401 |
+| [Validate user credentials](#validate-user) | POST | `/auth/user/validate` | 200, 400, 401 |
 | [Service health check](#health-check) | GET | `/health` | 200 |
 
 ---
@@ -27,13 +27,13 @@ Complete API reference for developers integrating with the User Service microser
 
 ### Create User
 
-**POST** `/api/v1/users`
+**POST** `/api/v1/user`
 
 Create a new user account with roles and optional wallet balance.
 
 #### Request
 ```http
-POST /api/v1/users
+POST /api/v1/user
 Content-Type: application/json
 
 {
@@ -352,13 +352,13 @@ DELETE /api/v1/users/674c8b3d1234567890abcdef
 
 ### Validate User
 
-**POST** `/api/v1/auth/validate-user`
+**POST** `/api/v1/auth/user/validate`
 
 Validate user credentials for service-to-service authentication.
 
 #### Request
 ```http
-POST /api/v1/auth/validate-user
+POST /api/v1/auth/user/validate
 Content-Type: application/json
 
 {

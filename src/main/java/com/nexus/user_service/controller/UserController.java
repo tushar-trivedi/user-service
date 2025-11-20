@@ -38,7 +38,7 @@ public class UserController {
      * Request: UserCreateRequestDTO
      * Response: UserResponseDTO
      */
-    @PostMapping("/users")
+    @PostMapping("/user")
     public ResponseEntity<Map<String, Object>> createUser(@RequestBody UserCreateRequestDTO request) {
         long startTime = System.currentTimeMillis();
         try {
@@ -83,7 +83,7 @@ public class UserController {
      * Request: UserValidationRequestDTO
      * Response: UserResponseDTO or 401 Unauthorized
      */
-    @PostMapping("/auth/validate-user")
+    @PostMapping("/auth/user/validate")
     public ResponseEntity<Map<String, Object>> validateUser(@RequestBody UserValidationRequestDTO request) {
         long startTime = System.currentTimeMillis();
         try {

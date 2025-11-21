@@ -3,8 +3,10 @@ package com.nexus.user_service.controller;
 import com.nexus.user_service.dto.request.UserCreateRequestDTO;
 import com.nexus.user_service.dto.request.UserUpdateRequestDTO;
 import com.nexus.user_service.dto.request.UserValidationRequestDTO;
+import com.nexus.user_service.dto.request.UserBatchRequestDTO;
 import com.nexus.user_service.dto.response.UserResponseDTO;
 import com.nexus.user_service.dto.response.UserListResponseDTO;
+import com.nexus.user_service.dto.response.UserBatchResponseDTO;
 import com.nexus.user_service.model.User;
 import com.nexus.user_service.service.UserService;
 import com.nexus.user_service.utils.LoggerUtils;
@@ -298,6 +300,53 @@ public class UserController {
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseUtils.error(e.getMessage()));
             }
+        }
+    }
+    
+    /**
+     * Get multiple users by their IDs in batch
+     * POST /api/v1/users/batch
+     * Request: UserBatchRequestDTO
+     * Response: Array of UserBatchResponseDTO
+     */
+    @PostMapping("/users/batch")
+    public ResponseEntity<Map<String, Object>> getUsersBatch(@RequestBody UserBatchRequestDTO request) {
+        long startTime = System.currentTimeMillis();
+        try {
+            logger.info("Batch user lookup request received - User IDs count: {}", 
+                request.getUserIds() != null ? request.getUserIds().size() : 0);
+            
+            // Validate request
+            if (request.getUserIds() == null || request.getUserIds().isEmpty()) {
+                logger.warn("Batch user lookup failed - No user IDs provided");
+                return ResponseEntity.badRequest().body(ResponseUtils.error("User IDs are required"));
+            }
+            
+            // Validate each user ID format
+            for (String userId : request.getUserIds()) {
+                if (!ValidationUtils.isValidId(userId)) {
+                    logger.warn("Invalid user ID format in batch request: {}", userId);
+                    return ResponseEntity.badRequest().body(ResponseUtils.error("Invalid user ID format: " + userId));
+                }
+            }
+            
+            logger.debug("Input validation completed, proceeding with batch user lookup");
+            List<UserBatchResponseDTO> response = userService.getUsersBatch(request.getUserIds());
+            
+            long executionTime = System.currentTimeMillis() - startTime;
+            long foundCount = response.stream().filter(user -> user.getEmail() != null).count();
+            long notFoundCount = response.size() - foundCount;
+            
+            logger.info("Batch user lookup completed - Requested: {}, Found: {}, Not Found: {}, Execution time: {}ms", 
+                request.getUserIds().size(), foundCount, notFoundCount, executionTime);
+            
+            return ResponseEntity.ok(ResponseUtils.success("Batch user lookup completed", response));
+            
+        } catch (RuntimeException e) {
+            long executionTime = System.currentTimeMillis() - startTime;
+            logger.error("Batch user lookup failed - Error: {}, Execution time: {}ms", 
+                e.getMessage(), executionTime, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseUtils.error(e.getMessage()));
         }
     }
     

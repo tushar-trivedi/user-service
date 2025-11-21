@@ -86,4 +86,11 @@ public interface UserService {
      */
     UserResponseDTO validateUser(UserValidationRequestDTO request);
     
+    /**
+     * Get multiple users by their IDs in batch
+     * @param userIds List of user IDs to retrieve
+     * @return List<UserBatchResponseDTO> containing user details or null values for not found users
+     */
+    List<com.nexus.user_service.dto.response.UserBatchResponseDTO> getUsersBatch(List<String> userIds);
+    
 }

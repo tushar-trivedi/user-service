@@ -4,6 +4,7 @@ import com.nexus.user_service.dto.request.UserCreateRequestDTO;
 import com.nexus.user_service.dto.request.UserUpdateRequestDTO;
 import com.nexus.user_service.dto.request.UserValidationRequestDTO;
 import com.nexus.user_service.dto.response.UserResponseDTO;
+import com.nexus.user_service.dto.response.UserBatchResponseDTO;
 import com.nexus.user_service.model.User;
 import com.nexus.user_service.repository.UserRepository;
 import com.nexus.user_service.utils.LoggerUtils;
@@ -15,7 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -227,6 +231,61 @@ public class UserServiceImpl implements UserService {
         UserResponseDTO response = MapperUtils.toUserResponseDTO(user);
         
         logger.info("User validation successful for: {}", request.getEmail());
+        return response;
+    }
+    
+    @Override
+    public List<UserBatchResponseDTO> getUsersBatch(List<String> userIds) {
+        long startTime = System.currentTimeMillis();
+        logger.info("Starting batch user lookup - Requested IDs count: {}", userIds != null ? userIds.size() : 0);
+        
+        // Validate input
+        if (userIds == null || userIds.isEmpty()) {
+            logger.warn("Batch user lookup failed - No user IDs provided");
+            return new ArrayList<>();
+        }
+        
+        logger.debug("Executing batch database query for {} user IDs", userIds.size());
+        
+        // Use optimized findAllById query to get all users in one database call
+        Iterable<User> foundUsers = userRepository.findAllById(userIds);
+        
+        // Create a map for quick lookup of found users by ID
+        Map<String, User> userMap = new HashMap<>();
+        int foundCount = 0;
+        for (User user : foundUsers) {
+            userMap.put(user.getId(), user);
+            foundCount++;
+        }
+        
+        logger.debug("Found {} users out of {} requested IDs", foundCount, userIds.size());
+        
+        // Build response list maintaining the order of requested IDs
+        List<UserBatchResponseDTO> response = new ArrayList<>();
+        for (String userId : userIds) {
+            User user = userMap.get(userId);
+            if (user != null) {
+                // User found - create response with user data
+                UserBatchResponseDTO userResponse = new UserBatchResponseDTO(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getRoles()
+                );
+                response.add(userResponse);
+                logger.debug("Added user to batch response - ID: {}, Email: {}, Roles: {}", 
+                    user.getId(), user.getEmail(), user.getRoles());
+            } else {
+                // User not found - create response with null values
+                UserBatchResponseDTO userResponse = new UserBatchResponseDTO(userId, null, null);
+                response.add(userResponse);
+                logger.debug("Added not-found entry to batch response - ID: {}", userId);
+            }
+        }
+        
+        long executionTime = System.currentTimeMillis() - startTime;
+        logger.info("Batch user lookup completed - Requested: {}, Found: {}, Not Found: {}, Execution time: {}ms", 
+            userIds.size(), foundCount, (userIds.size() - foundCount), executionTime);
+        
         return response;
     }
 }

@@ -1,10 +1,18 @@
 package com.nexus.user_service.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
+@Schema(description = "Response DTO for batch user lookup operations containing user details or null for not found users")
 public class UserBatchResponseDTO {
+    
+    @Schema(description = "User ID", example = "507f1f77bcf86cd799439011")
     private String id;
+    
+    @Schema(description = "User email address (null if user not found)", example = "john.doe@example.com")
     private String email;
+    
+    @Schema(description = "User roles (null if user not found)", example = "[\"USER\", \"ADMIN\"]")
     private List<String> roles;
 
     // Default constructor

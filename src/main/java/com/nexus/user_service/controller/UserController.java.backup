@@ -19,19 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Tag(name = "User Management", description = "User account management operations including creation, retrieval, updates, validation, and batch operations. Business Stakeholder: Customer Operations Team, Technical Owner: Backend Engineering Team")
 @RestController
 @RequestMapping("/api/v1")
 @CrossOrigin(origins = "*")
@@ -48,15 +40,6 @@ public class UserController {
      * Request: UserCreateRequestDTO
      * Response: UserResponseDTO
      */
-    @Operation(
-        summary = "Create New User Account",
-        description = "Creates a new user account with email, password, roles, and optional wallet balance. Business Stakeholder: Customer Onboarding Team, Technical Owner: User Management Team, Use Case: User registration and account setup",
-        tags = {"User Management"}
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "400", description = "Invalid input data or validation error", content = @Content(schema = @Schema(implementation = Map.class)))
-    })
     @PostMapping("/user")
     public ResponseEntity<Map<String, Object>> createUser(@RequestBody UserCreateRequestDTO request) {
         long startTime = System.currentTimeMillis();
@@ -102,16 +85,6 @@ public class UserController {
      * Request: UserValidationRequestDTO
      * Response: UserResponseDTO or 401 Unauthorized
      */
-    @Operation(
-        summary = "Validate User Credentials",
-        description = "Validates user login credentials for authentication. Business Stakeholder: Security Operations Team, Technical Owner: Authentication Team, Use Case: User login and session management",
-        tags = {"User Management"}
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "User credentials validated successfully", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "401", description = "Invalid credentials", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "400", description = "Invalid input format", content = @Content(schema = @Schema(implementation = Map.class)))
-    })
     @PostMapping("/auth/user/validate")
     public ResponseEntity<Map<String, Object>> validateUser(@RequestBody UserValidationRequestDTO request) {
         long startTime = System.currentTimeMillis();
@@ -156,15 +129,6 @@ public class UserController {
      * GET /api/v1/users
      * Response: List of UserListResponseDTO
      */
-    @Operation(
-        summary = "Retrieve All Users",
-        description = "Retrieves a list of all users in the system with basic information. Business Stakeholder: Customer Operations Team, Technical Owner: User Management Team, Use Case: Admin dashboard and user management",
-        tags = {"User Management"}
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Users retrieved successfully", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = Map.class)))
-    })
     @GetMapping("/users")
     public ResponseEntity<Map<String, Object>> getAllUsers() {
         long startTime = System.currentTimeMillis();
@@ -190,16 +154,6 @@ public class UserController {
      * GET /api/v1/users/{id}
      * Response: UserResponseDTO
      */
-    @Operation(
-        summary = "Get User by ID",
-        description = "Retrieves detailed user information by user ID including wallet balance and funding requests. Business Stakeholder: Customer Support Team, Technical Owner: User Management Team, Use Case: Profile viewing and customer support",
-        tags = {"User Management"}
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "User retrieved successfully", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "400", description = "Invalid user ID format", content = @Content(schema = @Schema(implementation = Map.class)))
-    })
     @GetMapping("/users/{id}")
     public ResponseEntity<Map<String, Object>> getUserById(@PathVariable String id) {
         long startTime = System.currentTimeMillis();
@@ -241,16 +195,6 @@ public class UserController {
      * Request: UserUpdateRequestDTO
      * Response: UserResponseDTO
      */
-    @Operation(
-        summary = "Update User Information",
-        description = "Updates user profile information, wallet balance, and funding requests. Supports wallet adjustments and funding request management. Business Stakeholder: Customer Operations Team, Technical Owner: User Management Team, Use Case: Profile updates and wallet management",
-        tags = {"User Management"}
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "User updated successfully", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "400", description = "Invalid input data or insufficient funds", content = @Content(schema = @Schema(implementation = Map.class)))
-    })
     @PutMapping("/users/{id}")
     public ResponseEntity<Map<String, Object>> updateUser(
             @PathVariable String id, 
@@ -321,17 +265,6 @@ public class UserController {
      * DELETE /api/v1/users/{id}
      * Response: { message: "User deleted successfully" }
      */
-    @Operation(
-        summary = "Delete User Account",
-        description = "Permanently deletes a user account from the system. This action cannot be undone. Business Stakeholder: Data Management Team, Technical Owner: User Management Team, Use Case: Account closure and data cleanup",
-        tags = {"User Management"}
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "User deleted successfully", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "400", description = "Invalid user ID format", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "500", description = "Failed to delete user", content = @Content(schema = @Schema(implementation = Map.class)))
-    })
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable String id) {
         long startTime = System.currentTimeMillis();
@@ -376,16 +309,6 @@ public class UserController {
      * Request: UserBatchRequestDTO
      * Response: Array of UserBatchResponseDTO
      */
-    @Operation(
-        summary = "Batch User Lookup",
-        description = "Retrieves multiple users by their IDs in a single optimized request. Returns user ID, email, and roles for found users, null values for not found users. Business Stakeholder: Integration Team, Technical Owner: Performance Engineering Team, Use Case: Bulk user data retrieval for microservice communication",
-        tags = {"User Management"}
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Batch lookup completed successfully", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "400", description = "Invalid input or user ID format", content = @Content(schema = @Schema(implementation = Map.class))),
-        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = Map.class)))
-    })
     @PostMapping("/users/batch")
     public ResponseEntity<Map<String, Object>> getUsersBatch(@RequestBody UserBatchRequestDTO request) {
         long startTime = System.currentTimeMillis();
@@ -431,14 +354,6 @@ public class UserController {
      * Health check endpoint
      * GET /api/v1/health
      */
-    @Operation(
-        summary = "Health Check",
-        description = "Service health status endpoint for monitoring and load balancer health checks. Business Stakeholder: DevOps Team, Technical Owner: Infrastructure Team, Use Case: Service monitoring and availability checks",
-        tags = {"User Management"}
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Service is healthy", content = @Content(schema = @Schema(implementation = Map.class)))
-    })
     @GetMapping("/health")
     public ResponseEntity<Map<String, Object>> healthCheck() {
         logger.info("Health check requested");
